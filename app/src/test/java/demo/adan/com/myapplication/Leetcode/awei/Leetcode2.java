@@ -1,4 +1,4 @@
-package demo.adan.com.myapplication.Leetcode;
+package demo.adan.com.myapplication.Leetcode.awei;
 
 import org.junit.Test;
 
