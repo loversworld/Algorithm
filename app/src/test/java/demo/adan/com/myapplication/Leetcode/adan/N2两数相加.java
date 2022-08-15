@@ -11,7 +11,7 @@ public class N2两数相加 {
 
     @Test
     public void main() {
-        ListNode result = addTwoNumbers2(
+        ListNode result = addTwoNumbers3(
                 new ListNode(2, new ListNode(4, new ListNode(9))),
                 new ListNode(5, new ListNode(6, new ListNode(4, new ListNode(9)))));
 
@@ -21,7 +21,7 @@ public class N2两数相加 {
         }
         System.out.println(" = 10407");
 
-        result = addTwoNumbers2(
+        result = addTwoNumbers3(
                 new ListNode(9, new ListNode(9, new ListNode(9, new ListNode(9, new ListNode(9))))),
                 new ListNode(9, new ListNode(9)));
 
@@ -31,7 +31,7 @@ public class N2两数相加 {
         }
         System.out.println(" = 100098");
 
-        result = addTwoNumbers2(
+        result = addTwoNumbers3(
                 new ListNode(5),
                 new ListNode(5));
 
@@ -110,42 +110,65 @@ public class N2两数相加 {
     }
 
     public ListNode addTwoNumbers2(ListNode l1, ListNode l2) {
-
         ListNode result = l1;
-        ListNode one = new ListNode(1);
-
         while (l1 != null) {
-            if (l2 == null) {
-                if (l1.val > 9) {
-                    l1.val %= 10;
-                    if (l1.next == null) {
-                        l1.next = one;
-                    } else {
-                        l1.next.val++;
-                    }
-                    l1 = l1.next;
-                    continue;
-                }
-                break;
-            }
+            //循环结束
+            if (l2 == null) break;
+            // 计算当前位
             l1.val += l2.val;
-
-            if (l1.next != null) {
-                l1.next.val += (l1.val / 10);
-                l1.val %= 10;
-            } else if (l2.next != null) {
-                l2.next.val += (l1.val / 10);
-                l1.val %= 10;
+            // 如果l1没有下一节点，交换l1 l2的后续节点，保证l1不为空
+            if (l1.next == null) {
                 l1.next = l2.next;
                 l2.next = null;
-            } else if (l1.val > 9) {
-                l1.val %= 10;
-                l1.next = one;
             }
-
+            // 处理进位
+            if (l1.val > 9) {
+                l1.val -= 10;
+                if (l1.next == null) {
+                    l1.next = new ListNode(1);
+                } else if (l2.next == null) {
+                    l2.next = new ListNode(1);
+                } else {
+                    l2.next.val++;
+                }
+            }
+            // 指向下一节点
             l1 = l1.next;
             l2 = l2.next;
         }
         return result;
+    }
+
+    public ListNode addTwoNumbers3(ListNode l1, ListNode l2) {
+        return add(0, l1, l2);
+    }
+
+    private ListNode add(int add, ListNode l1, ListNode l2) {
+        if (add == 0) {
+            if (l1 == null) return l2;
+            else if (l2 == null) return l1;
+            else {
+                l1.val += l2.val;
+                l1.next = add(l1.val / 10, l1.next, l2.next);
+                l1.val %= 10;
+                return l1;
+            }
+        }
+
+        if (l1 == null) {
+            if (l2 == null) return new ListNode(1);
+            l1 = l2;
+            l2 = null;
+        }
+
+        l1.val++;
+        if (l2 == null) {
+            l1.next = add(l1.val / 10, l1.next, null);
+        } else {
+            l1.val += l2.val;
+            l1.next = add(l1.val / 10, l1.next, l2.next);
+        }
+        l1.val %= 10;
+        return l1;
     }
 }
